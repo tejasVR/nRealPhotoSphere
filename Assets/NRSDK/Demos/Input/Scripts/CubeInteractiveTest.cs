@@ -25,7 +25,7 @@ namespace NRKernal.NRExamples
 
             // Adding open camera feature
             //CameraController.Instance.OpenCamera();
-            CameraController.Instance.TakePicture();
+            //CameraController.Instance.TakePicture();
         }
 
         //when pointer hover, set the cube color to green
