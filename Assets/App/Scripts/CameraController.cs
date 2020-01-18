@@ -12,11 +12,17 @@ namespace NRKernal
         //WebCamTexture webcamTexture;
         //Renderer renderer;
 
-        [SerializeField] Snapshot screenshot;
+        [SerializeField] Picture picturePrefab;
+        [SerializeField] Recording recordingPrefab;
+
         [SerializeField] GameObject anchor;
         [SerializeField] GameObject lookAt;
 
         private GameObject currentSnapshot;
+
+        private bool isRecording;
+
+        AudioClip tempRecording;
 
         //[SerializeField] Renderer screenshotRenderer;
 
@@ -43,12 +49,14 @@ namespace NRKernal
         {
             TriggerButton.PressedDownCallback += TakePicture;
             PlaceSnapshotButton.PressedDownCallback += PlaceSnapshot;
+            RecordingButton.PressedDownCallback += Record;
         }
 
         private void OnDisable()
         {
             TriggerButton.PressedDownCallback -= TakePicture;
             PlaceSnapshotButton.PressedDownCallback -= PlaceSnapshot;
+            RecordingButton.PressedDownCallback -= Record;
 
         }
 
@@ -85,11 +93,14 @@ namespace NRKernal
                 photo.SetPixels(webcamTexture.GetPixels());
                 photo.Apply();
 
-                currentSnapshot = Instantiate(screenshot.gameObject) as GameObject;
+                currentSnapshot = Instantiate(picturePrefab.gameObject) as GameObject;
 
                 currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
                 currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
-                currentSnapshot.GetComponent<Snapshot>().SetQuadTexture(photo);
+
+
+
+                currentSnapshot.GetComponent<Picture>().SetQuadTexture(photo);
 
                 //currentSnapshot.GetComponent<Renderer>().material.mainTexture = photo;
 
@@ -100,7 +111,6 @@ namespace NRKernal
                 //Write out the PNG. Of course you have to substitute your_path for something sensible
                 //File.WriteAllBytes(your_path + "photo.png", bytes);
             }
-
         }
 
         private void PlaceSnapshot()
@@ -129,11 +139,43 @@ namespace NRKernal
 
         private GameObject CreateScreenshotPrefab()
         {
-            var gO = Instantiate(screenshot.gameObject) as GameObject;
+            var gO = Instantiate(picturePrefab.gameObject) as GameObject;
 
             gO.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
 
             return gO;
+        }
+
+        private void Record()
+        {
+            if (!isRecording)
+            {
+                StartRecording();
+            }
+            else
+            {
+                EndRecording();
+            }
+        }
+
+        private void StartRecording()
+        {
+            tempRecording = Microphone.Start(Microphone.devices[0], true, 10, 44100);
+            isRecording = true;
+        }
+
+        private void EndRecording()
+        {
+            Microphone.End(Microphone.devices[0]);
+
+            currentSnapshot = Instantiate(recordingPrefab.gameObject) as GameObject;
+
+            currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
+            currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+
+            currentSnapshot.GetComponent<Recording>().SetAudioClip(tempRecording);
+
+            isRecording = false;
         }
     }
 }
