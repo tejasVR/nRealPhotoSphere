@@ -52,9 +52,14 @@ namespace NRKernal
             m_LineRenderer.enabled = true;
             m_LineRenderer.useWorldSpace = false;
 
-            var startPoint = transform.TransformPoint(0f, 0f, m_Raycaster.NearDistance);
+            //var startPoint = transform.TransformPoint(0f, 0f, m_Raycaster.NearDistance);
+            var startPoint = transform.TransformPoint(0f, -m_Raycaster.NearDistance, 0f);
+
+            //var endPoint = result.isValid ? points[pointCount - 1]
+            //    : (m_Raycaster.transform.position + m_Raycaster.transform.forward * defaultDistance);
+
             var endPoint = result.isValid ? points[pointCount - 1]
-                : (m_Raycaster.transform.position + m_Raycaster.transform.forward * defaultDistance);
+              : (m_Raycaster.transform.position + -m_Raycaster.transform.up * defaultDistance);
 
             if (pointCount == 2)
             {

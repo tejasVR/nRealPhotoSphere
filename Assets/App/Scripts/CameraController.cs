@@ -60,7 +60,7 @@ namespace NRKernal
             //webcamTexture.Play();
         }
 
-        public void TakePicture()
+        private void TakePicture()
         {
             StartCoroutine(TakePhotoRoutine());
         }
@@ -89,8 +89,9 @@ namespace NRKernal
 
                 currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
                 currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                currentSnapshot.GetComponent<Snapshot>().SetQuadTexture(photo);
 
-                currentSnapshot.GetComponent<Renderer>().material.mainTexture = photo;
+                //currentSnapshot.GetComponent<Renderer>().material.mainTexture = photo;
 
                 //screenshotRenderer.material.mainTexture = photo;
 
@@ -102,7 +103,7 @@ namespace NRKernal
 
         }
 
-        public void PlaceSnapshot()
+        private void PlaceSnapshot()
         {
             if (currentSnapshot != null)
             {
@@ -110,6 +111,19 @@ namespace NRKernal
                 currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(null);
 
                 currentSnapshot = null;
+            }
+            else
+            {
+                if (Physics.Raycast(lookAt.transform.position, -lookAt.transform.up, out RaycastHit hit, Mathf.Infinity))
+                {
+                    if (hit.collider.CompareTag("Screenshot"))
+                    {
+                        currentSnapshot = hit.collider.gameObject;
+
+                        currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
+                        currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                    }
+                }
             }
         }
 

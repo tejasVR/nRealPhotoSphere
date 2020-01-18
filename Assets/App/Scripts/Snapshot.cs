@@ -7,6 +7,8 @@ public class Snapshot : MonoBehaviour
     private Transform followTransform;
     private Transform lookAtTransform;
 
+    [SerializeField] Renderer quadRenderer;
+
     void Update()
     {
         if (followTransform != null && lookAtTransform != null)
@@ -25,5 +27,10 @@ public class Snapshot : MonoBehaviour
     public void SetLookAtTransform(Transform _transformToLookAt)
     {
         lookAtTransform = _transformToLookAt;
+    }
+
+    public void SetQuadTexture(Texture2D _texture)
+    {
+        quadRenderer.material.mainTexture = _texture;
     }
 }
