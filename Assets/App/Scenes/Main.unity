@@ -307,6 +307,7 @@ Transform:
   - {fileID: 667931546}
   - {fileID: 1058734941}
   - {fileID: 78246379}
+  - {fileID: 1551302330}
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1234,6 +1235,36 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 803c8c9707994b24a83885fa08113cba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1551302329
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1551302330}
+  m_Layer: 0
+  m_Name: Scene 4
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1551302330
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1551302329}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.3, y: -0.2, z: 0.51}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 382423211}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1894410830
 GameObject:
   m_ObjectHideFlags: 0
@@ -1351,9 +1382,11 @@ MonoBehaviour:
   - sceneParent: {fileID: 667931545}
     background360: {fileID: 2800000, guid: 73aef0e4af8eb30498a283db29459743, type: 3}
   - sceneParent: {fileID: 1058734940}
-    background360: {fileID: 2800000, guid: c3613d35de2d67045a812534e46a4bf1, type: 3}
+    background360: {fileID: 2800000, guid: 0bbd744f1a3264b4f8ddb98f2acf02f4, type: 3}
   - sceneParent: {fileID: 78246378}
-    background360: {fileID: 2800000, guid: 404c46f2d4d6fc746ae81c79240c6c03, type: 3}
+    background360: {fileID: 2800000, guid: f07422affa05bc240b35943c49eaa8ed, type: 3}
+  - sceneParent: {fileID: 1551302329}
+    background360: {fileID: 2800000, guid: 9307c61ba81efe644ba503cd2aba61eb, type: 3}
   skybox: {fileID: 2100000, guid: 37435edd671122e438b9f38e7afef242, type: 2}
 --- !u!82 &1978102619
 AudioSource:
