@@ -23,6 +23,11 @@ namespace NRKernal
         private bool isRecording;
 
         AudioClip tempRecording;
+        AudioSource tempAudioSource;
+        private float startRecordingTime;
+
+        private Recording recordingActive;
+
 
         //[SerializeField] Renderer screenshotRenderer;
 
@@ -38,26 +43,46 @@ namespace NRKernal
             }
 
             //renderer = GetComponent<Renderer>();
+            tempAudioSource = GetComponent<AudioSource>();
         }
 
         private void Start()
         {
             //OpenCamera();
+            isRecording = false;
         }
 
         private void OnEnable()
         {
             TriggerButton.PressedDownCallback += TakePicture;
             PlaceSnapshotButton.PressedDownCallback += PlaceSnapshot;
-            RecordingButton.PressedDownCallback += Record;
+            RecordingButton.PressedDownCallback += StartRecording;
+            RecordingButton.PressedUpCallback += EndRecording;
         }
 
         private void OnDisable()
         {
             TriggerButton.PressedDownCallback -= TakePicture;
             PlaceSnapshotButton.PressedDownCallback -= PlaceSnapshot;
-            RecordingButton.PressedDownCallback -= Record;
+            RecordingButton.PressedDownCallback -= StartRecording;
+            RecordingButton.PressedUpCallback -= EndRecording;
 
+        }
+
+        private void Update()
+        {
+            
+            if (Physics.Raycast(lookAt.transform.position, -lookAt.transform.up, out RaycastHit hit, Mathf.Infinity))
+            {
+                if (hit.collider.GetComponent<Recording>() && recordingActive == null)
+                {
+
+                    currentSnapshot = hit.collider.gameObject;
+
+                    currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
+                    currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                }
+            }
         }
 
         // Open the camera
@@ -148,34 +173,68 @@ namespace NRKernal
 
         private void Record()
         {
-            if (!isRecording)
+            //if (currentSnapshot == null)
             {
-                StartRecording();
-            }
-            else
-            {
-                EndRecording();
+                //currentSnapshot = new GameObject();
+
+                if (!isRecording)
+                {
+                    StartRecording();
+                }
+                else
+                {
+                    EndRecording();
+                }
             }
         }
 
         private void StartRecording()
         {
-            tempRecording = Microphone.Start(Microphone.devices[0], true, 10, 44100);
-            isRecording = true;
+            if (!isRecording)
+            {
+                //Get the max frequency of a microphone, if it's less than 44100 record at the max frequency, else record at 44100
+                int minFreq;
+                int maxFreq;
+                int freq = 44100;
+                Microphone.GetDeviceCaps("", out minFreq, out maxFreq);
+                if (maxFreq < 44100)
+                    freq = maxFreq;
+
+                //Start the recording, the length of 300 gives it a cap of 5 minutes
+                tempRecording = Microphone.Start("", false, 300, 44100);
+                startRecordingTime = Time.time;
+
+                //tempAudioSource.clip = Microphone.Start(null, false, 30, 44100);
+                isRecording = true;
+            }
+            
         }
 
         private void EndRecording()
         {
-            Microphone.End(Microphone.devices[0]);
+            if (isRecording)
+            {
+                //Microphone.End(Microphone.devices[0])/
+                //End the recording when the mouse comes back up, then play it
+                Microphone.End("");
 
-            currentSnapshot = Instantiate(recordingPrefab.gameObject) as GameObject;
+                //Trim the audioclip by the length of the recording
+                AudioClip recordingNew = AudioClip.Create(tempRecording.name, (int)((Time.time - startRecordingTime) * tempRecording.frequency), tempRecording.channels, tempRecording.frequency, false);
+                float[] data = new float[(int)((Time.time - startRecordingTime) * tempRecording.frequency)];
+                tempRecording.GetData(data, 0);
+                recordingNew.SetData(data, 0);
+                this.tempRecording = recordingNew;
 
-            currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
-            currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                currentSnapshot = Instantiate(recordingPrefab.gameObject) as GameObject;
 
-            currentSnapshot.GetComponent<Recording>().SetAudioClip(tempRecording);
+                currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
+                currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
 
-            isRecording = false;
+                currentSnapshot.GetComponent<Recording>().SetAudioClip(tempRecording);
+
+                isRecording = false;
+            }
+
         }
     }
 }

@@ -2,27 +2,21 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class Recording : Snapshot, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    [SerializeField] SpriteRenderer microphoneIcon;
+    [SerializeField] SpriteRenderer soundwavesIcon;
+
     private AudioSource audioSource;
     private AudioClip audioClip;
+
+    private bool isPlayingback;
 
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
-    }
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     public void SetAudioClip(AudioClip _audioClip)
@@ -43,5 +37,27 @@ public class Recording : Snapshot, IPointerClickHandler, IPointerEnterHandler, I
     public void OnPointerExit(PointerEventData eventData)
     {
         audioSource.Stop();
+    }
+
+    public void StartPlayback()
+    {
+        if (!isPlayingback)
+        {
+            microphoneIcon.enabled = false;
+            soundwavesIcon.enabled = true;
+            audioSource.PlayOneShot(audioClip);
+            isPlayingback = true;
+        }
+    }
+
+    public void StopPlayback()
+    {
+        if (isPlayingback)
+        {
+            microphoneIcon.enabled = true;
+            soundwavesIcon.enabled = false;
+            audioSource.Stop();
+
+        }
     }
 }
