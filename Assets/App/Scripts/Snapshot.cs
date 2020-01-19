@@ -9,6 +9,11 @@ public class Snapshot : MonoBehaviour
     private Transform followTransform;
     private Transform lookAtTransform;
 
+    public virtual void Start()
+    {
+        ToggleOutline(false);
+    }
+
     void Update()
     {
         if (followTransform != null && lookAtTransform != null)
