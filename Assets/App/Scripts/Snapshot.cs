@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class Snapshot : MonoBehaviour
 {
+    [SerializeField] GameObject outline;
+
     private Transform followTransform;
     private Transform lookAtTransform;
 
@@ -27,5 +29,8 @@ public class Snapshot : MonoBehaviour
         lookAtTransform = _transformToLookAt;
     }
 
-   
+    public void ToggleOutline(bool _showOutline)
+    {
+        outline.SetActive(_showOutline);
+    }  
 }
