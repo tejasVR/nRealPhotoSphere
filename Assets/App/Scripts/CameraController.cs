@@ -55,17 +55,27 @@ namespace NRKernal
         private void OnEnable()
         {
             TriggerButton.PressedDownCallback += TakePicture;
-            PlaceSnapshotButton.PressedDownCallback += PlaceSnapshot;
+            //PlaceSnapshotButton.PressedDownCallback += PlaceSnapshot;
+            
+            PlaceSnapshotButton.PressedDownCallback += BeginPlace;
+            PlaceSnapshotButton.PressedUpCallback += EndPlace;
+            
             RecordingButton.PressedDownCallback += StartRecording;
             RecordingButton.PressedUpCallback += EndRecording;
+            DeleteButton.PressedDownCallback += DeleteSnapshot;
         }
 
         private void OnDisable()
         {
             TriggerButton.PressedDownCallback -= TakePicture;
-            PlaceSnapshotButton.PressedDownCallback -= PlaceSnapshot;
+            //PlaceSnapshotButton.PressedDownCallback -= PlaceSnapshot;
+
+            PlaceSnapshotButton.PressedDownCallback -= BeginPlace;
+            PlaceSnapshotButton.PressedUpCallback -= EndPlace;
+
             RecordingButton.PressedDownCallback -= StartRecording;
             RecordingButton.PressedUpCallback -= EndRecording;
+            DeleteButton.PressedDownCallback -= DeleteSnapshot;
 
         }
 
@@ -77,10 +87,19 @@ namespace NRKernal
                 if (hit.collider.GetComponent<Recording>() && recordingActive == null)
                 {
 
-                    currentSnapshot = hit.collider.gameObject;
+                    
 
-                    currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
-                    currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                    recordingActive = hit.collider.GetComponent<Recording>();
+
+                    recordingActive.StartPlayback();
+                }
+            }
+            else
+            {
+                if (recordingActive != null)
+                {
+                    recordingActive.StopPlayback();
+                    recordingActive = null;
                 }
             }
         }
@@ -157,6 +176,50 @@ namespace NRKernal
 
                         currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
                         currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                    }
+                }
+            }
+        }
+
+        private void BeginPlace()
+        {
+            if (currentSnapshot == null)
+            {
+                if (Physics.Raycast(lookAt.transform.position, -lookAt.transform.up, out RaycastHit hit, Mathf.Infinity))
+                {
+                    if (hit.collider.CompareTag("Screenshot"))
+                    {
+                        currentSnapshot = hit.collider.gameObject;
+
+                        currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
+                        currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
+                    }
+                }
+            }
+
+            
+        }
+
+        private void EndPlace()
+        {
+            if (currentSnapshot != null)
+            {
+                currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(null);
+                currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(null);
+
+                currentSnapshot = null;
+            }
+        }
+
+        private void DeleteSnapshot()
+        {
+            if (currentSnapshot == null)
+            {
+                if (Physics.Raycast(lookAt.transform.position, -lookAt.transform.up, out RaycastHit hit, Mathf.Infinity))
+                {
+                    if (hit.collider.CompareTag("Screenshot"))
+                    {
+                        Destroy(hit.collider.gameObject);
                     }
                 }
             }

@@ -31,12 +31,15 @@ public class Recording : Snapshot, IPointerClickHandler, IPointerEnterHandler, I
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        audioSource.PlayOneShot(audioClip);
+        //audioSource.PlayOneShot(audioClip);
+        StartPlayback();
+
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        audioSource.Stop();
+        //audioSource.Stop();
+        StopPlayback();
     }
 
     public void StartPlayback()
@@ -57,7 +60,7 @@ public class Recording : Snapshot, IPointerClickHandler, IPointerEnterHandler, I
             microphoneIcon.enabled = true;
             soundwavesIcon.enabled = false;
             audioSource.Stop();
-
+            isPlayingback = false;
         }
     }
 }
