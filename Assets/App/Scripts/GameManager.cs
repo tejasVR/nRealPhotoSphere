@@ -3,6 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+[Serializable]
+public class Scene
+{
+    public GameObject sceneParent;
+    public Texture background360;
+}
+
 public class GameManager : MonoBehaviour
 {
     #region EVENTS
@@ -39,6 +47,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject anchor;
     [SerializeField] GameObject lookAt;
 
+    [Space(7)]
+    [SerializeField] Scene[] scenes;
+    [SerializeField] Material skybox;
+
+
     private GameObject currentSnapshot;
 
     private bool isRecording;
@@ -48,6 +61,7 @@ public class GameManager : MonoBehaviour
     private float startRecordingTime;
 
     private Recording recordingActive;
+    private int currentScene;
 
     private void Awake()
     {
@@ -68,6 +82,9 @@ public class GameManager : MonoBehaviour
     {
         //OpenCamera();
         isRecording = false;
+
+        currentScene = 0;
+        ApplyCurrentScene();
     }
 
     private void OnEnable()
@@ -81,6 +98,9 @@ public class GameManager : MonoBehaviour
         RecordingButton.PressedDownCallback += StartRecording;
         RecordingButton.PressedUpCallback += EndRecording;
         DeleteButton.PressedDownCallback += DeleteSnapshot;
+
+        NextSceneButton.PressedDownCallback += NextScene;
+        PreviousSceneButton.PressedDownCallback += PreviousScene;
     }
 
     private void OnDisable()
@@ -94,6 +114,10 @@ public class GameManager : MonoBehaviour
         RecordingButton.PressedDownCallback -= StartRecording;
         RecordingButton.PressedUpCallback -= EndRecording;
         DeleteButton.PressedDownCallback -= DeleteSnapshot;
+
+        NextSceneButton.PressedDownCallback -= NextScene;
+        PreviousSceneButton.PressedDownCallback -= PreviousScene;
+
 
     }
 
@@ -332,6 +356,53 @@ public class GameManager : MonoBehaviour
 
             isRecording = false;
         }
+
+    }
+
+    private void ApplyCurrentScene()
+    {
+        foreach (var scene in scenes)
+        {
+            if (scene != scenes[currentScene])
+            {
+                scene.sceneParent.SetActive(false);
+            }
+            else
+            {
+                scene.sceneParent.SetActive(true);
+                skybox.mainTexture = scene.background360;
+            }
+        }
+    }
+
+    private void NextScene()
+    {
+        if (currentScene < scenes.Length - 1)
+        {
+            currentScene++;
+        }
+        else
+        {
+            currentScene = 0;
+        }
+
+        ApplyCurrentScene();
+
+    }
+
+    private void PreviousScene()
+    {
+        if (currentScene > 0)
+        {
+            currentScene--;
+        }
+        else
+        {
+            currentScene = scenes.Length - 1;
+        }
+
+        ApplyCurrentScene();
+
 
     }
 }

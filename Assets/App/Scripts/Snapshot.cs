@@ -11,7 +11,7 @@ public class Snapshot : MonoBehaviour
 
     public virtual void Start()
     {
-        ToggleOutline(false);
+        //ToggleOutline(false);
     }
 
     void Update()
