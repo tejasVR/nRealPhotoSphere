@@ -176,7 +176,7 @@ public class GameManager : MonoBehaviour
             photo.SetPixels(webcamTexture.GetPixels());
             photo.Apply();
 
-            currentSnapshot = Instantiate(picturePrefab.gameObject) as GameObject;
+            currentSnapshot = Instantiate(picturePrefab.gameObject, scenes[currentScene].sceneParent.transform) as GameObject;
 
             currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
             currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
@@ -343,7 +343,7 @@ public class GameManager : MonoBehaviour
             recordingNew.SetData(data, 0);
             this.tempRecording = recordingNew;
 
-            currentSnapshot = Instantiate(recordingPrefab.gameObject) as GameObject;
+            currentSnapshot = Instantiate(recordingPrefab.gameObject, scenes[currentScene].sceneParent.transform) as GameObject;
 
             currentSnapshot.GetComponent<Snapshot>().SetFollowTransform(anchor.transform);
             currentSnapshot.GetComponent<Snapshot>().SetLookAtTransform(lookAt.transform);
@@ -373,6 +373,8 @@ public class GameManager : MonoBehaviour
                 skybox.mainTexture = scene.background360;
             }
         }
+
+        currentSnapshot = null;
     }
 
     private void NextScene()
